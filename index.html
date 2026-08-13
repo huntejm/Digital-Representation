@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Data Representation Unit · AP CSP</title>
+<style>
+  :root{
+    --bg:#0a0e14; --surface:#121a24; --surface2:#182231; --line:#243044;
+    --ink:#e7edf5; --ink-dim:#8fa1b8;
+    --accent:#5eb3ff; --amber:#ffb454; --good:#5ee6a8; --bad:#ff6b81; --purple:#a06bff;
+    --mono:'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --sans:'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); padding:48px 20px 60px;}
+  .wrap{max-width:920px; margin:0 auto;}
+  .badge{display:inline-block; font-family:var(--mono); font-size:12px; letter-spacing:.12em; color:var(--amber); border:1px solid #ffb45455; padding:4px 10px; border-radius:20px; text-transform:uppercase; margin-bottom:16px;}
+  h1{font-size:36px; margin:0 0 10px; letter-spacing:-0.01em;}
+  .sub{color:var(--ink-dim); font-size:16px; line-height:1.6; max-width:640px; margin:0 0 40px;}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:18px;}
+  .card{
+    display:block; text-decoration:none; color:var(--ink);
+    background:linear-gradient(180deg,var(--surface),var(--surface2)); border:1px solid var(--line);
+    border-radius:16px; padding:24px; transition:border-color .15s ease, transform .15s ease;
+  }
+  .card:hover{border-color:var(--accent); transform:translateY(-2px);}
+  .card .num{font-family:var(--mono); font-size:12px; color:var(--accent); letter-spacing:.1em;}
+  .card h2{font-size:19px; margin:8px 0 6px;}
+  .card p{color:var(--ink-dim); font-size:13.5px; line-height:1.6; margin:0 0 14px;}
+  .card .go{font-family:var(--mono); font-size:12px; color:var(--good);}
+  .card.c1{border-left:3px solid var(--accent);}
+  .card.c2{border-left:3px solid var(--amber);}
+  .card.c3{border-left:3px solid var(--good);}
+  .card.c4{border-left:3px solid var(--purple);}
+  .card.c5{border-left:3px solid var(--bad);}
+
+  .foot{color:var(--ink-dim); font-size:12px; text-align:center; margin-top:44px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">AP CSP · Big Idea 3: Data</span>
+  <h1>How Computers Store Complex Information</h1>
+  <p class="sub">Five interactive activities exploring how numbers, text, images, and sound get turned into 1s and 0s — and a debate on what that means for the world. Click any activity below to begin.</p>
+
+  <div class="grid">
+    <a class="card c1" href="1-binary-numbers-activity.html">
+      <div class="num">Activity 01</div>
+      <h2>Binary Bulbs</h2>
+      <p>Toggle bits on an 8-bit byte to see how binary and decimal numbers connect. Includes a challenge mode.</p>
+      <div class="go">Open activity →</div>
+    </a>
+    <a class="card c2" href="2-text-encoding-activity.html">
+      <div class="num">Activity 02</div>
+      <h2>Code Breaker</h2>
+      <p>See how every character you type is really a number underneath. Encode and decode secret messages.</p>
+      <div class="go">Open activity →</div>
+    </a>
+    <a class="card c3" href="3-image-encoding-activity.html">
+      <div class="num">Activity 03</div>
+      <h2>Pixel Painter</h2>
+      <p>Paint a pixel grid at different bit depths and watch the storage cost change. Crack a mystery image.</p>
+      <div class="go">Open activity →</div>
+    </a>
+    <a class="card c4" href="4-sound-encoding-activity.html">
+      <div class="num">Activity 04</div>
+      <h2>Sound Sampler</h2>
+      <p>Draw a sound wave, then adjust sample rate and bit depth to see what survives the digitizing process.</p>
+      <div class="go">Open activity →</div>
+    </a>
+    <a class="card c5" href="5-digitization-debate-activity.html">
+      <div class="num">Activity 05</div>
+      <h2>The Digitization Debate</h2>
+      <p>Draw a topic, split into teams, and debate the real-world impact of turning everything into data.</p>
+      <div class="go">Open activity →</div>
+    </a>
+  </div>
+
+  <div class="foot">AP CSP · Data Representation Unit</div>
+</div>
+</body>
+</html>
