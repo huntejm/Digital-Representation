@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary Matching Activity</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    p.instructions {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
+    }
+    .game-container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1000px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+    .column {
+      width: 48%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      user-select: none;
+    }
+    .card:hover {
+      border-color: #3b82f6;
+      background-color: #f8fafc;
+    }
+    .term-card {
+      font-weight: bold;
+      text-align: center;
+    }
+    .def-card {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .selected {
+      border-color: #3b82f6;
+      background-color: #eff6ff;
+      box-shadow: 0 0 0 2px #3b82f6;
+    }
+    .matched {
+      background-color: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d;
+      cursor: default;
+      opacity: 0.7;
+    }
+    .incorrect {
+      background-color: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      animation: shake 0.3s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    #score-board {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #1e293b;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Vocabulary Matching Activity</h1>
+  <p class="instructions">Click a <strong>Term</strong> on the left, then click its matching <strong>Definition</strong> on the right.</p>
+
+  <div class="game-container">
+    <div class="column" id="terms-column"></div>
+    <div class="column" id="defs-column"></div>
+  </div>
+
+  <div id="score-board">Matched: <span id="score">0</span> / 15</div>
+
+  <script>
+    const vocabData = [
+      { id: 1, term: "Cloud Computing", def: "On-demand delivery of digital services like storage and processing over the internet rather than local hardware." },
+      { id: 2, term: "Synchronization", def: "The process of ensuring files are updated and identical across all connected devices and platforms simultaneously." },
+      { id: 3, term: "Collaborative Editing", def: "Multiple users working on the same document at once, seeing real-time changes and contributions from others." },
+      { id: 4, term: "Permissions", def: "Settings that determine whether a user can view, comment on, or edit a specific shared file." },
+      { id: 5, term: "Version History", def: "A record of previous drafts that allows users to track changes or restore older file iterations." },
+      { id: 6, term: "Cloud Storage", def: "A model where data is transmitted and stored on remote server systems managed by a provider." },
+      { id: 7, term: "File Hierarchy", def: "The organized structure of folders and subfolders used to categorize and locate digital documents efficiently." },
+      { id: 8, term: "Direct Link", def: "A specific URL that provides immediate access to a digital resource or document for authorized users." },
+      { id: 9, term: "Offline Access", def: "A feature allowing users to view and edit files without an active internet connection through local caching." },
+      { id: 10, term: "Shared Drive", def: "A collective storage space where files belong to a team rather than an individual person." },
+      { id: 11, term: "Encryption", def: "The process of encoding data to prevent unauthorized access, ensuring privacy and security during digital transfer." },
+      { id: 12, term: "Search Operators", def: "Specific symbols or words added to queries to narrow down and refine digital search results." },
+      { id: 13, term: "Metadata", def: "Descriptive data providing information about a file, such as the owner, creation date, and file size." },
+      { id: 14, term: "Bandwidth", def: "The maximum rate of data transfer across a network, affecting how quickly files upload or download." },
+      { id: 15, term: "Interoperability", def: "The ability of different software systems or file formats to work together and exchange information seamlessly." }
+    ];
+
+    let selectedTerm = null;
+    let selectedDef = null;
+    let matchesCount = 0;
+
+    function shuffle(array) {
+      return array.slice().sort(() => Math.random() - 0.5);
+    }
+
+    function initGame() {
+      const termsCol = document.getElementById('terms-column');
+      const defsCol = document.getElementById('defs-column');
+
+      const shuffledTerms = shuffle(vocabData);
+      const shuffledDefs = shuffle(vocabData);
+
+      shuffledTerms.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'term-card');
+        card.textContent = item.term;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleTermClick);
+        termsCol.appendChild(card);
+      });
+
+      shuffledDefs.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'def-card');
+        card.textContent = item.def;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleDefClick);
+        defsCol.appendChild(card);
+      });
+    }
+
+    function handleTermClick(e) {
+      if (e.target.classList.contains('matched')) return;
+
+      if (selectedTerm) {
+        selectedTerm.classList.remove('selected');
+      }
+      selectedTerm = e.target;
+      selectedTerm.classList.add('selected');
+
+      checkMatch();
+    }
+
+    function handleDefClick(e) {
+      if (e.target.classList.contains('matched')) return;
+
+      if (selectedDef) {
+        selectedDef.classList.remove('selected');
+      }
+      selectedDef = e.target;
+      selectedDef.classList.add('selected');
+
+      checkMatch();
+    }
+
+    function checkMatch() {
+      if (selectedTerm && selectedDef) {
+        const termId = selectedTerm.dataset.id;
+        const defId = selectedDef.dataset.id;
+
+        if (termId === defId) {
+          selectedTerm.classList.remove('selected');
+          selectedDef.classList.remove('selected');
+          selectedTerm.classList.add('matched');
+          selectedDef.classList.add('matched');
+
+          selectedTerm = null;
+          selectedDef = null;
+
+          matchesCount++;
+          document.getElementById('score').textContent = matchesCount;
+
+          if (matchesCount === vocabData.length) {
+            setTimeout(() => alert('Great job! You matched all terms correctly!'), 300);
+          }
+        } else {
+          const tempTerm = selectedTerm;
+          const tempDef = selectedDef;
+
+          tempTerm.classList.add('incorrect');
+          tempDef.classList.add('incorrect');
+
+          selectedTerm = null;
+          selectedDef = null;
+
+          setTimeout(() => {
+            tempTerm.classList.remove('selected', 'incorrect');
+            tempDef.classList.remove('selected', 'incorrect');
+          }, 600);
+        }
+      }
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
