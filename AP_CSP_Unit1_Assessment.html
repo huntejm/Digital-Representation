@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AP CSP — Unit 1 Assessment: Data Representation & Digital Information</title>
+<style>
+  :root{
+    --ink:#1c2530;
+    --sub:#5a6472;
+    --line:#dbe0e6;
+    --accent:#2b5fb3;
+    --card:#ffffff;
+    --bg:#f4f6f8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: Georgia, 'Times New Roman', serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.5;
+  }
+  header{
+    background:var(--accent);
+    color:#fff;
+    padding:28px 20px;
+    text-align:center;
+  }
+  header h1{
+    margin:0 0 6px 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:1.4em;
+    letter-spacing:.3px;
+  }
+  header p{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:.95em;
+    opacity:.9;
+  }
+  .directions{
+    max-width:800px;
+    margin:20px auto 0 auto;
+    padding:14px 18px;
+    background:#fff8e1;
+    border:1px solid #e8d792;
+    border-radius:6px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:.95em;
+    color:#3a3320;
+  }
+  .student-info{
+    max-width:800px;
+    margin:20px auto 0 auto;
+    padding:16px 18px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .student-info label{
+    display:flex;
+    flex-direction:column;
+    font-size:.85em;
+    font-weight:bold;
+    color:var(--sub);
+    flex:1;
+    min-width:180px;
+  }
+  .student-info input{
+    margin-top:6px;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    font-size:1em;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  main{
+    max-width:800px;
+    margin:0 auto;
+    padding:10px 20px 60px 20px;
+  }
+  .part-title{
+    font-family: Arial, Helvetica, sans-serif;
+    color:var(--accent);
+    border-bottom:2px solid var(--accent);
+    padding-bottom:6px;
+    margin-top:40px;
+    font-size:1.15em;
+  }
+  .question{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:16px 18px;
+    margin:16px 0;
+  }
+  .qtext{
+    font-weight:bold;
+    margin-bottom:10px;
+    white-space:pre-line;
+  }
+  .options label{
+    display:block;
+    padding:7px 10px;
+    border-radius:5px;
+    cursor:pointer;
+    margin-bottom:4px;
+  }
+  .options label:hover{
+    background:#eef3fa;
+  }
+  .options input{
+    margin-right:8px;
+  }
+  .qnum{
+    display:inline-block;
+    background:var(--accent);
+    color:#fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:.8em;
+    padding:2px 8px;
+    border-radius:12px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .controls{
+    max-width:800px;
+    margin:20px auto;
+    padding:0 20px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  button{
+    font-family: Arial, Helvetica, sans-serif;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:.95em;
+  }
+  button.secondary{
+    background:#fff;
+    color:var(--accent);
+    border:1px solid var(--accent);
+  }
+  button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+  }
+  button:hover:not(:disabled){
+    opacity:.9;
+  }
+  #status-box{
+    max-width:800px;
+    margin:0 auto;
+    padding:0 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight:bold;
+    font-size:1.05em;
+    color:var(--accent);
+    min-height:24px;
+  }
+  #status-box.error{
+    color:#c0392b;
+  }
+  fieldset:disabled .question{
+    opacity:.7;
+  }
+  footer{
+    text-align:center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:.8em;
+    color:var(--sub);
+    padding:20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AP Computer Science Principles — Unit 1 Assessment</h1>
+  <p>Data Representation &amp; Digital Information</p>
+</header>
+
+<div class="directions">
+  <strong>Directions:</strong> Enter your name and period below, then select the best answer for each question.
+  Each question has one correct answer. You may use scratch paper for calculations. Click <strong>Submit</strong> when finished.
+</div>
+
+<div class="student-info">
+  <label>Name
+    <input type="text" id="student-name" placeholder="First and Last Name" autocomplete="off">
+  </label>
+  <label>Period
+    <input type="text" id="student-period" placeholder="e.g. 3" autocomplete="off">
+  </label>
+</div>
+
+<div class="controls">
+  <button id="submit-btn">Submit</button>
+  <button id="reset-btn" class="secondary">Reset</button>
+</div>
+<div id="status-box"></div>
+
+<fieldset id="quiz-fieldset" style="border:none;padding:0;margin:0;">
+<main id="quiz-form">
+
+  <h2 class="part-title">Part 1 — Number Systems &amp; Binary Representation</h2>
+
+  <div class="question" data-answer="C">
+    <div class="qtext"><span class="qnum">1</span>What is the decimal value of the binary number 101101?</div>
+    <div class="options">
+      <label><input type="radio" name="q1" value="A"><span>A. 41</span></label>
+      <label><input type="radio" name="q1" value="B"><span>B. 43</span></label>
+      <label><input type="radio" name="q1" value="C" data-correct="true"><span>C. 45</span></label>
+      <label><input type="radio" name="q1" value="D"><span>D. 47</span></label>
+      <label><input type="radio" name="q1" value="E"><span>E. 49</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">2</span>Which binary number represents the decimal number 38?</div>
+    <div class="options">
+      <label><input type="radio" name="q2" value="A"><span>A. 100101</span></label>
+      <label><input type="radio" name="q2" value="B" data-correct="true"><span>B. 100110</span></label>
+      <label><input type="radio" name="q2" value="C"><span>C. 101001</span></label>
+      <label><input type="radio" name="q2" value="D"><span>D. 101010</span></label>
+      <label><input type="radio" name="q2" value="E"><span>E. 110010</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="D">
+    <div class="qtext"><span class="qnum">3</span>What is the decimal value of the hexadecimal number 2F?</div>
+    <div class="options">
+      <label><input type="radio" name="q3" value="A"><span>A. 35</span></label>
+      <label><input type="radio" name="q3" value="B"><span>B. 39</span></label>
+      <label><input type="radio" name="q3" value="C"><span>C. 42</span></label>
+      <label><input type="radio" name="q3" value="D" data-correct="true"><span>D. 47</span></label>
+      <label><input type="radio" name="q3" value="E"><span>E. 52</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">4</span>A computer uses 8 bits to store an unsigned integer. Which statement is true?</div>
+    <div class="options">
+      <label><input type="radio" name="q4" value="A"><span>A. The largest value is 128.</span></label>
+      <label><input type="radio" name="q4" value="B" data-correct="true"><span>B. The largest value is 255.</span></label>
+      <label><input type="radio" name="q4" value="C"><span>C. The largest value is 256.</span></label>
+      <label><input type="radio" name="q4" value="D"><span>D. There are only 8 possible values.</span></label>
+      <label><input type="radio" name="q4" value="E"><span>E. There are 512 possible values.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">5</span>Which of the following represents the same value as decimal 173?</div>
+    <div class="options">
+      <label><input type="radio" name="q5" value="A"><span>A. Binary 10101100 and hexadecimal AC</span></label>
+      <label><input type="radio" name="q5" value="B" data-correct="true"><span>B. Binary 10101101 and hexadecimal AD</span></label>
+      <label><input type="radio" name="q5" value="C"><span>C. Binary 10110101 and hexadecimal B5</span></label>
+      <label><input type="radio" name="q5" value="D"><span>D. Binary 11001101 and hexadecimal CD</span></label>
+      <label><input type="radio" name="q5" value="E"><span>E. Binary 11010101 and hexadecimal D5</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="A">
+    <div class="qtext"><span class="qnum">6</span>A student counts upward in binary:
+0000
+0001
+0010
+0011
+0100
+0101
+What should come next?</div>
+    <div class="options">
+      <label><input type="radio" name="q6" value="A" data-correct="true"><span>A. 0110</span></label>
+      <label><input type="radio" name="q6" value="B"><span>B. 0111</span></label>
+      <label><input type="radio" name="q6" value="C"><span>C. 1000</span></label>
+      <label><input type="radio" name="q6" value="D"><span>D. 1010</span></label>
+      <label><input type="radio" name="q6" value="E"><span>E. 1100</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="A">
+    <div class="qtext"><span class="qnum">7</span>A student is counting upward in binary. The current value is: 00101111
+What is the next value?</div>
+    <div class="options">
+      <label><input type="radio" name="q7" value="A" data-correct="true"><span>A. 00110000</span></label>
+      <label><input type="radio" name="q7" value="B"><span>B. 00101110</span></label>
+      <label><input type="radio" name="q7" value="C"><span>C. 00111111</span></label>
+      <label><input type="radio" name="q7" value="D"><span>D. 01001111</span></label>
+      <label><input type="radio" name="q7" value="E"><span>E. 00110001</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="D">
+    <div class="qtext"><span class="qnum">8</span>What is the decimal value of the binary number 10110101?</div>
+    <div class="options">
+      <label><input type="radio" name="q8" value="A"><span>A. 165</span></label>
+      <label><input type="radio" name="q8" value="B"><span>B. 171</span></label>
+      <label><input type="radio" name="q8" value="C"><span>C. 173</span></label>
+      <label><input type="radio" name="q8" value="D" data-correct="true"><span>D. 181</span></label>
+      <label><input type="radio" name="q8" value="E"><span>E. 185</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="C">
+    <div class="qtext"><span class="qnum">9</span>The hexadecimal number 7C is converted to binary. Which result is correct?</div>
+    <div class="options">
+      <label><input type="radio" name="q9" value="A"><span>A. 01110100</span></label>
+      <label><input type="radio" name="q9" value="B"><span>B. 01111000</span></label>
+      <label><input type="radio" name="q9" value="C" data-correct="true"><span>C. 01111100</span></label>
+      <label><input type="radio" name="q9" value="D"><span>D. 11110000</span></label>
+      <label><input type="radio" name="q9" value="E"><span>E. 11111100</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="A">
+    <div class="qtext"><span class="qnum">10</span>Which of the following correctly orders the values from least to greatest?</div>
+    <div class="options">
+      <label><input type="radio" name="q10" value="A" data-correct="true"><span>A. 1010₂, A₁₆, 11₁₀</span></label>
+      <label><input type="radio" name="q10" value="B"><span>B. A₁₆, 1010₂, 11₁₀</span></label>
+      <label><input type="radio" name="q10" value="C"><span>C. 1010₂, 11₁₀, A₁₆</span></label>
+      <label><input type="radio" name="q10" value="D"><span>D. 11₁₀, 1010₂, A₁₆</span></label>
+      <label><input type="radio" name="q10" value="E"><span>E. A₁₆, 11₁₀, 1010₂</span></label>
+    </div>
+  </div>
+
+  <h2 class="part-title">Part 2 — Text, ASCII &amp; Unicode</h2>
+
+  <div class="question" data-answer="D">
+    <div class="qtext"><span class="qnum">11</span>Standard ASCII uses 7 bits to represent characters. How many different values can be represented?</div>
+    <div class="options">
+      <label><input type="radio" name="q11" value="A"><span>A. 64</span></label>
+      <label><input type="radio" name="q11" value="B"><span>B. 96</span></label>
+      <label><input type="radio" name="q11" value="C"><span>C. 100</span></label>
+      <label><input type="radio" name="q11" value="D" data-correct="true"><span>D. 128</span></label>
+      <label><input type="radio" name="q11" value="E"><span>E. 256</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="C">
+    <div class="qtext"><span class="qnum">12</span>The decimal ASCII value for uppercase A is 65. Which statement best describes what this means?</div>
+    <div class="options">
+      <label><input type="radio" name="q12" value="A"><span>A. The computer stores the physical shape of the letter A.</span></label>
+      <label><input type="radio" name="q12" value="B"><span>B. The number 65 is permanently and universally defined as the letter A in every encoding system.</span></label>
+      <label><input type="radio" name="q12" value="C" data-correct="true"><span>C. ASCII uses a numerical value to represent the character A.</span></label>
+      <label><input type="radio" name="q12" value="D"><span>D. The letter A requires 65 bits to store.</span></label>
+      <label><input type="radio" name="q12" value="E"><span>E. ASCII stores letters using hexadecimal rather than binary.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="C">
+    <div class="qtext"><span class="qnum">13</span>A student claims that standard ASCII can represent every character used in every modern language. Which response is most accurate?</div>
+    <div class="options">
+      <label><input type="radio" name="q13" value="A"><span>A. Yes, because ASCII uses 16 bits.</span></label>
+      <label><input type="radio" name="q13" value="B"><span>B. Yes, because ASCII can represent more than 65,000 characters.</span></label>
+      <label><input type="radio" name="q13" value="C" data-correct="true"><span>C. No, because standard ASCII provides only 128 possible values and does not include characters from many writing systems.</span></label>
+      <label><input type="radio" name="q13" value="D"><span>D. No, because ASCII can represent only numbers and punctuation.</span></label>
+      <label><input type="radio" name="q13" value="E"><span>E. Yes, because computers automatically convert ASCII into any language.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="C">
+    <div class="qtext"><span class="qnum">14</span>What is the primary purpose of Unicode?</div>
+    <div class="options">
+      <label><input type="radio" name="q14" value="A"><span>A. To replace binary numbers with decimal numbers</span></label>
+      <label><input type="radio" name="q14" value="B"><span>B. To make computers perform calculations faster</span></label>
+      <label><input type="radio" name="q14" value="C" data-correct="true"><span>C. To provide a system capable of representing characters from many different writing systems</span></label>
+      <label><input type="radio" name="q14" value="D"><span>D. To reduce all text files to 7 bits per character</span></label>
+      <label><input type="radio" name="q14" value="E"><span>E. To eliminate the need for computers to use binary</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="D">
+    <div class="qtext"><span class="qnum">15</span>A website needs to display English, Arabic, Chinese, and mathematical symbols. Which would be the most appropriate choice?</div>
+    <div class="options">
+      <label><input type="radio" name="q15" value="A"><span>A. Standard ASCII</span></label>
+      <label><input type="radio" name="q15" value="B"><span>B. Binary only</span></label>
+      <label><input type="radio" name="q15" value="C"><span>C. Decimal only</span></label>
+      <label><input type="radio" name="q15" value="D" data-correct="true"><span>D. Unicode</span></label>
+      <label><input type="radio" name="q15" value="E"><span>E. Hexadecimal only</span></label>
+    </div>
+  </div>
+
+  <h2 class="part-title">Part 3 — Representing Images</h2>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">16</span>A digital image is made up of thousands of tiny squares called pixels. Each pixel must store information about the color that should be displayed. Which statement best explains how a computer stores a digital image?</div>
+    <div class="options">
+      <label><input type="radio" name="q16" value="A"><span>A. The computer stores the image as one large binary number representing the entire picture.</span></label>
+      <label><input type="radio" name="q16" value="B" data-correct="true"><span>B. The computer stores numerical data representing the characteristics of individual pixels.</span></label>
+      <label><input type="radio" name="q16" value="C"><span>C. The computer stores the image as a physical copy of what appears on the screen.</span></label>
+      <label><input type="radio" name="q16" value="D"><span>D. The computer stores images only as hexadecimal numbers.</span></label>
+      <label><input type="radio" name="q16" value="E"><span>E. Images cannot be represented using binary.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="A">
+    <div class="qtext"><span class="qnum">17</span>Consider a black-and-white image in which each pixel can be either black or white. What is the minimum number of bits needed to represent the color of one pixel?</div>
+    <div class="options">
+      <label><input type="radio" name="q17" value="A" data-correct="true"><span>A. 1</span></label>
+      <label><input type="radio" name="q17" value="B"><span>B. 2</span></label>
+      <label><input type="radio" name="q17" value="C"><span>C. 4</span></label>
+      <label><input type="radio" name="q17" value="D"><span>D. 8</span></label>
+      <label><input type="radio" name="q17" value="E"><span>E. 16</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">18</span>An image is originally stored using 2 bits per pixel, allowing four possible colors. A designer changes the image to use 8 bits per pixel. What is the most likely result?</div>
+    <div class="options">
+      <label><input type="radio" name="q18" value="A"><span>A. The image can represent fewer colors.</span></label>
+      <label><input type="radio" name="q18" value="B" data-correct="true"><span>B. The image can represent more possible colors.</span></label>
+      <label><input type="radio" name="q18" value="C"><span>C. The image will automatically become physically larger on the screen.</span></label>
+      <label><input type="radio" name="q18" value="D"><span>D. The image will no longer use binary.</span></label>
+      <label><input type="radio" name="q18" value="E"><span>E. The image will require exactly half as much storage.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">19</span>Two digital photographs have the same dimensions. Photo A uses 8 bits per pixel, while Photo B uses 24 bits per pixel. Which statement is most accurate?</div>
+    <div class="options">
+      <label><input type="radio" name="q19" value="A"><span>A. Photo A must have a larger file size.</span></label>
+      <label><input type="radio" name="q19" value="B" data-correct="true"><span>B. Photo B can represent more color information per pixel and may require more storage.</span></label>
+      <label><input type="radio" name="q19" value="C"><span>C. Photo B must have fewer pixels.</span></label>
+      <label><input type="radio" name="q19" value="D"><span>D. Both photos must use exactly the same amount of storage.</span></label>
+      <label><input type="radio" name="q19" value="E"><span>E. Photo A cannot be displayed on a computer.</span></label>
+    </div>
+  </div>
+
+  <h2 class="part-title">Part 4 — Representing Sound</h2>
+
+  <div class="question" data-answer="A">
+    <div class="qtext"><span class="qnum">20</span>A microphone records a sound wave and converts it into digital information. Which process is most directly involved?</div>
+    <div class="options">
+      <label><input type="radio" name="q20" value="A" data-correct="true"><span>A. The computer stores the sound as a sequence of numerical measurements.</span></label>
+      <label><input type="radio" name="q20" value="B"><span>B. The computer stores the physical sound wave inside the processor.</span></label>
+      <label><input type="radio" name="q20" value="C"><span>C. The computer converts the sound directly into ASCII characters.</span></label>
+      <label><input type="radio" name="q20" value="D"><span>D. The computer stores sound only as hexadecimal letters.</span></label>
+      <label><input type="radio" name="q20" value="E"><span>E. The computer does not use binary when storing sound.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">21</span>A digital audio recording has a sampling rate of 8,000 samples per second. Another recording uses 44,100 samples per second. Assuming all other factors are equal, which statement is most accurate?</div>
+    <div class="options">
+      <label><input type="radio" name="q21" value="A"><span>A. The 8,000 Hz recording captures more measurements of the sound each second.</span></label>
+      <label><input type="radio" name="q21" value="B" data-correct="true"><span>B. The 44,100 Hz recording captures more measurements of the sound each second.</span></label>
+      <label><input type="radio" name="q21" value="C"><span>C. Both recordings contain exactly the same number of measurements.</span></label>
+      <label><input type="radio" name="q21" value="D"><span>D. Sampling rate has nothing to do with digital sound.</span></label>
+      <label><input type="radio" name="q21" value="E"><span>E. The 8,000 Hz recording must always have a larger file size.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="A">
+    <div class="qtext"><span class="qnum">22</span>A student says, "A digital recording is not the actual sound wave. It is a representation of the sound." Which explanation best supports the student's statement?</div>
+    <div class="options">
+      <label><input type="radio" name="q22" value="A" data-correct="true"><span>A. Digital audio consists of numerical measurements that approximate the original sound wave.</span></label>
+      <label><input type="radio" name="q22" value="B"><span>B. Digital audio is stored as photographs of the sound wave.</span></label>
+      <label><input type="radio" name="q22" value="C"><span>C. Digital audio is stored as letters using ASCII.</span></label>
+      <label><input type="radio" name="q22" value="D"><span>D. Computers cannot store sound waves.</span></label>
+      <label><input type="radio" name="q22" value="E"><span>E. Digital audio contains no numerical information.</span></label>
+    </div>
+  </div>
+
+  <h2 class="part-title">Part 5 — Digitization &amp; Its Impacts</h2>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">23</span>A library converts thousands of physical books into digital files. Which is an important advantage of digitizing the books?</div>
+    <div class="options">
+      <label><input type="radio" name="q23" value="A"><span>A. The books can no longer be copied.</span></label>
+      <label><input type="radio" name="q23" value="B" data-correct="true"><span>B. The digital files can potentially be searched, copied, stored, and distributed more easily.</span></label>
+      <label><input type="radio" name="q23" value="C"><span>C. The books automatically become more accurate.</span></label>
+      <label><input type="radio" name="q23" value="D"><span>D. The files no longer require storage space.</span></label>
+      <label><input type="radio" name="q23" value="E"><span>E. Digitization prevents unauthorized access.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="C">
+    <div class="qtext"><span class="qnum">24</span>A school digitizes student records and stores them in an online database. Which is a potential negative consequence of this change?</div>
+    <div class="options">
+      <label><input type="radio" name="q24" value="A"><span>A. The information can no longer be accessed by computers.</span></label>
+      <label><input type="radio" name="q24" value="B"><span>B. The information cannot be searched.</span></label>
+      <label><input type="radio" name="q24" value="C" data-correct="true"><span>C. Unauthorized people could potentially gain access to sensitive information if security is inadequate.</span></label>
+      <label><input type="radio" name="q24" value="D"><span>D. Digital information cannot be copied.</span></label>
+      <label><input type="radio" name="q24" value="E"><span>E. Digital information automatically becomes less useful.</span></label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="B">
+    <div class="qtext"><span class="qnum">25</span>A company digitizes a large collection of photographs, documents, and audio recordings. Which statement best describes an important consequence of digitizing this information?</div>
+    <div class="options">
+      <label><input type="radio" name="q25" value="A"><span>A. Once information is digitized, it can no longer be changed.</span></label>
+      <label><input type="radio" name="q25" value="B" data-correct="true"><span>B. Digitized information can be processed, copied, transmitted, and stored by computers, creating both new opportunities and potential concerns.</span></label>
+      <label><input type="radio" name="q25" value="C"><span>C. Digitized information is always smaller than the original physical information.</span></label>
+      <label><input type="radio" name="q25" value="D"><span>D. Digitization eliminates all concerns about privacy and ownership.</span></label>
+      <label><input type="radio" name="q25" value="E"><span>E. Digitized information can only be accessed on the computer that originally created it.</span></label>
+    </div>
+  </div>
+
+</main>
+</fieldset>
+
+<footer>AP Computer Science Principles — Unit 1 Assessment · Data Representation &amp; Digital Information</footer>
+
+<script>
+  const questions = document.querySelectorAll('.question');
+  const statusBox = document.getElementById('status-box');
+  const submitBtn = document.getElementById('submit-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const fieldset = document.getElementById('quiz-fieldset');
+  const nameInput = document.getElementById('student-name');
+  const periodInput = document.getElementById('student-period');
+
+  function computeScore(){
+    let correct = 0;
+    let answered = 0;
+    questions.forEach(q => {
+      const name = q.querySelector('input').name;
+      const selected = q.querySelector(`input[name="${name}"]:checked`);
+      if (selected){
+        answered++;
+        if (selected.dataset.correct === 'true') correct++;
+      }
+    });
+    return { correct, answered, total: questions.length };
+  }
+
+  function csvEscape(value){
+    const str = String(value);
+    if (/[",\n]/.test(str)){
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  submitBtn.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    const period = periodInput.value.trim();
+
+    if (!name || !period){
+      statusBox.classList.add('error');
+      statusBox.textContent = 'Please enter your name and period before submitting.';
+      return;
+    }
+
+    const { correct, answered, total } = computeScore();
+    const timestamp = new Date().toLocaleString();
+
+    // Build a CSV record of this submission (downloads to the student's device)
+    const csvHeader = 'Name,Period,Score,Questions Answered,Total Questions,Timestamp';
+    const csvRow = [name, period, correct, answered, total, timestamp].map(csvEscape).join(',');
+    const csvContent = csvHeader + '\n' + csvRow;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `AP_CSP_Unit1_${name.replace(/\s+/g, '_')}_Period${period}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Send the result to the teacher's Google Sheet via Apps Script web app.
+    // TEACHER: paste your deployed web app URL here after following the setup steps.
+    const SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+    const lockAndShowStatus = (extraNote) => {
+      fieldset.disabled = true;
+      submitBtn.disabled = true;
+      nameInput.disabled = true;
+      periodInput.disabled = true;
+      statusBox.classList.remove('error');
+      statusBox.textContent = `Submitted! ${name}, Period ${period} — Score: ${correct} / ${total}. ${extraNote}`;
+    };
+
+    if (SCRIPT_URL.startsWith('PASTE_')){
+      // Setup not finished yet — fall back to a pre-filled email so nothing is lost.
+      const subject = `AP CSP Unit 1 Submission - ${name} (Period ${period})`;
+      const body = `Name: ${name}\nPeriod: ${period}\nScore: ${correct} / ${total}\nQuestions Answered: ${answered} / ${total}\nSubmitted: ${timestamp}`;
+      window.location.href = `mailto:huntejm@nv.ccsd.net?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      lockAndShowStatus('A CSV record has downloaded and your email app should open — please press Send. (Live Sheet submission is not yet configured.)');
+      return;
+    }
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ name, period, score: correct, answered, total, timestamp })
+    }).catch(() => { /* no-cors responses can't be read; ignore */ });
+
+    lockAndShowStatus('Your results have been sent to your teacher and a CSV backup has downloaded to this device.');
+  });
+
+  resetBtn.addEventListener('click', () => {
+    fieldset.disabled = false;
+    submitBtn.disabled = false;
+    nameInput.disabled = false;
+    periodInput.disabled = false;
+    nameInput.value = '';
+    periodInput.value = '';
+    document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+    statusBox.classList.remove('error');
+    statusBox.textContent = '';
+  });
+</script>
+
+</body>
+</html>
