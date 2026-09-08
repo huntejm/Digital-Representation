@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP CSP — How the Internet Works: Interactive Journey</title>
+<style>
+:root{
+  --navy:#002349; --blue:#0b5cab; --cyan:#1fb6ff; --green:#20a464;
+  --red:#d64545; --gold:#f2b84b; --ink:#102334; --light:#f4f7fa;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--ink)}
+header{background:var(--navy);color:white;padding:18px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+header h1{margin:0;font-size:24px} header small{opacity:.85}
+.progress{height:7px;background:#dce4eb}.bar{height:100%;width:0;background:var(--cyan);transition:.5s}
+main{max-width:1180px;margin:0 auto;padding:24px}
+.card{background:white;border-radius:16px;box-shadow:0 5px 20px #00234918;padding:24px;margin-bottom:20px}
+h2{margin-top:0;color:var(--navy)}
+button{border:0;border-radius:9px;padding:11px 17px;font-weight:bold;cursor:pointer;font-size:15px}
+.primary{background:var(--navy);color:#fff}.secondary{background:#e8eef4;color:var(--navy)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.screen{display:none}.screen.active{display:block}
+.scenario{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.choice{background:#fff;border:2px solid #d8e0e8;border-radius:12px;padding:16px;text-align:left;min-height:100px}
+.choice:hover{border-color:var(--blue);transform:translateY(-2px)}
+.choice.correct{border-color:var(--green);background:#effaf4}.choice.wrong{border-color:var(--red);background:#fff1f1}
+.feedback{margin-top:16px;padding:14px;border-radius:10px;display:none}.feedback.show{display:block}
+.feedback.good{background:#eaf8f0;border-left:5px solid var(--green)}
+.feedback.bad{background:#fff0f0;border-left:5px solid var(--red)}
+.network{position:relative;height:320px;border-radius:14px;background:linear-gradient(#eef6ff,#f8fbfe);overflow:hidden;border:1px solid #d6e2ed}
+.node{position:absolute;width:105px;text-align:center;font-size:12px;font-weight:bold}
+.icon{width:58px;height:58px;margin:auto;border-radius:14px;background:white;border:2px solid #9fb4c7;display:grid;place-items:center;font-size:29px;box-shadow:0 3px 10px #0001}
+.client{left:3%;top:40%}.switch{left:25%;top:40%}.router{left:47%;top:40%}.router2{left:67%;top:18%}.server{right:3%;top:40%}
+.line{position:absolute;height:4px;background:#b7c7d5;transform-origin:left center}
+.l1{left:12%;top:50%;width:15%}.l2{left:34%;top:50%;width:15%}.l3{left:56%;top:50%;width:14%}.l4{left:73%;top:35%;width:12%}.l5{left:73%;top:50%;width:12%}
+.packet{position:absolute;width:22px;height:14px;border-radius:4px;background:var(--cyan);box-shadow:0 0 12px #1fb6ff99;left:7%;top:49%;opacity:0;z-index:4}
+.packet.animate{animation:travel 5s linear forwards}
+@keyframes travel{
+0%{left:7%;top:49%;opacity:1} 23%{left:28%;top:49%} 48%{left:50%;top:49%}
+68%{left:70%;top:34%} 82%{left:77%;top:34%} 100%{left:91%;top:49%;opacity:1}
+}
+.packet2,.packet3{position:absolute;width:22px;height:14px;border-radius:4px;background:#7a62d3;left:7%;top:49%;opacity:0}
+.packet2.animate{animation:travel2 5s linear forwards}
+@keyframes travel2{0%{left:7%;top:49%;opacity:1}30%{left:28%;top:49%}52%{left:50%;top:49%}72%{left:70%;top:49%}100%{left:91%;top:49%;opacity:1}}
+.dns-flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:20px 0}
+.dns-box{padding:14px 18px;border:2px solid #b9c8d6;border-radius:12px;background:white;font-weight:bold}
+.arrow{font-size:24px;color:var(--blue)}
+.stack{display:grid;gap:8px;max-width:700px;margin:15px auto}
+.layer{padding:13px 18px;border-radius:9px;color:white;font-weight:bold;display:flex;justify-content:space-between}
+.app{background:#4b72c2}.transport{background:#3d8cbb}.internet{background:#2d9a73}.link{background:#6f8d5b}.hardware{background:#7a687f}
+.order-list{display:grid;gap:9px;margin:15px 0}
+.step{padding:12px 14px;background:#f1f5f8;border:2px solid #d7e0e8;border-radius:10px;cursor:pointer}
+.step.selected{border-color:var(--blue);background:#eef6ff}.step.correct{border-color:var(--green);background:#effaf4}
+.badge{display:inline-block;padding:5px 9px;border-radius:20px;background:#e8eef4;font-size:12px;font-weight:bold;margin:3px}
+.score{font-size:20px;font-weight:bold;color:var(--navy)}
+footer{display:flex;justify-content:space-between;gap:10px;margin-top:20px;align-items:center}
+@media(max-width:700px){main{padding:12px}.network{height:370px}.node{transform:scale(.85)}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>How the Internet Works</h1><small>AP Computer Science Principles • Interactive Network Journey</small></div>
+  <div class="score">Score: <span id="score">0</span> / 10</div>
+</header>
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<main>
+<section class="screen active" id="s0">
+<div class="card">
+<h2>Mission: Open a Secure Website</h2>
+<p>You are the browser. Your job is to get a secure web page from a remote server. You will have to make the right choice at each checkpoint.</p>
+<div class="scenario">
+<span class="badge">DNS</span><span class="badge">MAC vs. IP</span><span class="badge">Switches</span><span class="badge">Routers</span><span class="badge">Packets</span><span class="badge">TCP / UDP</span><span class="badge">HTTPS / HTTP / SSH</span><span class="badge">Layers</span><span class="badge">Fault Tolerance</span>
+</div>
+<p><strong>Challenge rule:</strong> You earn <strong>1 point for each correct checkpoint</strong>. Wrong choices explain why they do not fit. You must earn <strong>10/10 points (100%)</strong> to successfully complete the journey.</p>
+<button class="primary" onclick="go(1)">Start the Journey →</button>
+</div>
+</section>
+
+<section class="screen" id="s1">
+<div class="card">
+<h2>Checkpoint 1 — You have a domain name</h2>
+<p>Your browser wants to open <strong>school.example.edu</strong>. It knows the name, but the network needs an IP address.</p>
+<p><strong>What service solves this problem?</strong></p>
+<div class="choice-grid">
+<button class="choice" onclick="answer(1,false,'A switch forwards local frames using MAC addresses. It does not translate a domain name into an IP address.')">Switch</button>
+<button class="choice" onclick="answer(1,true,'Correct. DNS translates a human-friendly domain name into an IP address.')">DNS</button>
+<button class="choice" onclick="answer(1,false,'TCP provides reliable transport. It does not find the IP address for a domain name.')">TCP</button>
+<button class="choice" onclick="answer(1,false,'A router forwards packets between networks using IP addresses; it is not the name-to-address lookup service.')">Router</button>
+</div>
+<div class="feedback" id="f1"></div>
+</div></section>
+
+<section class="screen" id="s2">
+<div class="card">
+<h2>Checkpoint 2 — Follow the DNS hierarchy</h2>
+<p>The DNS lookup is hierarchical. Put the pieces in the correct direction for finding the appropriate TLD and then the authoritative answer.</p>
+<div class="dns-flow">
+<div class="dns-box" id="d0">Root</div><div class="arrow">→</div>
+<div class="dns-box" id="d1">TLD (.edu)</div><div class="arrow">→</div>
+<div class="dns-box" id="d2">Authoritative DNS</div>
+</div>
+<p><strong>What is the root server's role?</strong></p>
+<div class="choice-grid">
+<button class="choice" onclick="answer(2,true,'Correct. Root servers are at the top of the hierarchy and direct resolvers toward the appropriate TLD servers.')">Point toward the correct TLD servers</button>
+<button class="choice" onclick="answer(2,false,'Root servers do not normally provide the final IP address for the website.')">Provide the final website IP address</button>
+<button class="choice" onclick="answer(2,false,'That is a transport-layer responsibility, not the root DNS role.')">Retransmit missing packets</button>
+</div>
+<div class="feedback" id="f2"></div>
+</div></section>
+
+<section class="screen" id="s3">
+<div class="card">
+<h2>Checkpoint 3 — Build the request</h2>
+<p>Your browser is opening a secure website. Which application protocol belongs at the top of the stack?</p>
+<div class="choice-grid">
+<button class="choice" onclick="answer(3,false,'HTTP is web communication, but the scenario specifically requires the protected HTTPS version.')">HTTP</button>
+<button class="choice" onclick="answer(3,true,'Correct. HTTPS is HTTP protected by TLS encryption and authentication.')">HTTPS</button>
+<button class="choice" onclick="answer(3,false,'SSH is used for secure remote communication and administration, not ordinary secure web browsing.')">SSH</button>
+<button class="choice" onclick="answer(3,false,'UDP is a transport protocol, not the application-level web protocol.')">UDP</button>
+</div>
+<div class="feedback" id="f3"></div>
+</div></section>
+
+<section class="screen" id="s4">
+<div class="card">
+<h2>Checkpoint 4 — Choose the transport</h2>
+<p>The secure web request needs reliable, ordered delivery. Which transport protocol is the best fit?</p>
+<div class="choice-grid">
+<button class="choice" onclick="answer(4,true,'Correct. TCP establishes a connection, numbers data, detects missing data, and can request retransmission.')">TCP</button>
+<button class="choice" onclick="answer(4,false,'UDP has low overhead, but it does not guarantee delivery, ordering, or retransmission.')">UDP</button>
+<button class="choice" onclick="answer(4,false,'IP is responsible for addressing and forwarding packets, not reliable ordered transport.')">IP</button>
+<button class="choice" onclick="answer(4,false,'DNS translates names to IP addresses; it is not the reliable transport protocol.')">DNS</button>
+</div>
+<div class="feedback" id="f4"></div>
+</div></section>
+
+<section class="screen" id="s5">
+<div class="card">
+<h2>Checkpoint 5 — Local delivery: MAC or IP?</h2>
+<p>The frame is leaving your computer on the local network. The switch must decide which port should receive it.</p>
+<p><strong>Which address does the switch primarily use?</strong></p>
+<div class="choice-grid">
+<button class="choice" onclick="answer(5,true,'Correct. A switch learns which MAC address is associated with each port and forwards frames using the destination MAC address.')">MAC address</button>
+<button class="choice" onclick="answer(5,false,'Routers use destination IP addresses to forward packets between networks. A switch primarily uses MAC addresses.')">IP address</button>
+<button class="choice" onclick="answer(5,false,'A domain name is for humans and DNS translates it to an IP address. A switch does not use the domain name.')">Domain name</button>
+</div>
+<div class="feedback" id="f5"></div>
+</div></section>
+
+<section class="screen" id="s6">
+<div class="card">
+<h2>Checkpoint 6 — Cross the Internet</h2>
+<p>Now the packet needs to leave your local network. What device examines the destination IP address and chooses a next hop using a routing table?</p>
+<div class="choice-grid">
+<button class="choice" onclick="answer(6,false,'A switch connects devices within a LAN and primarily forwards frames using MAC addresses.')">Switch</button>
+<button class="choice" onclick="answer(6,true,'Correct. A router connects networks, examines the destination IP address, and chooses a next hop.')">Router</button>
+<button class="choice" onclick="answer(6,false,'A server provides services or resources. It is not the device responsible for choosing the network next hop.')">Server</button>
+<button class="choice" onclick="answer(6,false,'DNS helps find an IP address. It does not forward the packet toward the destination.')">DNS</button>
+</div>
+<div class="feedback" id="f6"></div>
+</div></section>
+
+<section class="screen" id="s7">
+<div class="card">
+<h2>Checkpoint 7 — Packets take the journey</h2>
+<p>Watch the data travel. Large messages are divided into smaller packets. Different packets can take different routes, and the destination reassembles the data.</p>
+<div class="network">
+<div class="line l1"></div><div class="line l2"></div><div class="line l3"></div><div class="line l4"></div><div class="line l5"></div>
+<div class="node client"><div class="icon">💻</div>Client</div>
+<div class="node switch"><div class="icon">🔀</div>Switch</div>
+<div class="node router"><div class="icon">📡</div>Router</div>
+<div class="node router2"><div class="icon">🌐</div>Router</div>
+<div class="node server"><div class="icon">🖥️</div>Server</div>
+<div class="packet" id="p1"></div><div class="packet2" id="p2"></div>
+</div>
+<button class="primary" onclick="animatePackets()">Send Packets</button>
+<p id="packetMsg"><strong>Think:</strong> Why can different packets use different routes?</p>
+<button class="secondary" id="next7" style="display:none" onclick="go(8)">Continue →</button>
+</div></section>
+
+<section class="screen" id="s8">
+<div class="card">
+<h2>Checkpoint 8 — A route fails</h2>
+<p>Imagine the direct route through one router becomes unavailable. What Internet design idea helps traffic continue?</p>
+<div class="choice-grid">
+<button class="choice" onclick="answer(8,true,'Correct. The Internet is decentralized and redundant. Routing can use another path when one route becomes unavailable.')">Redundancy / fault tolerance</button>
+<button class="choice" onclick="answer(8,false,'DNS solves name-to-IP lookup. It is not the main reason the network can route around a failed path.')">DNS hierarchy</button>
+<button class="choice" onclick="answer(8,false,'TCP helps recover missing data, but the networking concept illustrated here is redundant paths and fault tolerance.')">Encryption</button>
+<button class="choice" onclick="answer(8,false,'MAC addresses support local delivery. They do not explain Internet-wide alternate routing.')">MAC addressing</button>
+</div>
+<div class="feedback" id="f8"></div>
+</div></section>
+
+<section class="screen" id="s9">
+<div class="card">
+<h2>Checkpoint 9 — See the stack</h2>
+<p>Each layer has a different job. Match the protocol to its role by clicking the layers in order from the application down to the local connection.</p>
+<div class="stack">
+<div class="layer app">Application <span>HTTPS</span></div>
+<div class="layer transport">Transport <span>TCP</span></div>
+<div class="layer internet">Internet <span>IP</span></div>
+<div class="layer link">Link <span>Ethernet / Wi‑Fi</span></div>
+<div class="layer hardware">Devices / Hardware <span>Switch • Router • Server</span></div>
+</div>
+<p><strong>Which statement best explains why layers are useful?</strong></p>
+<div class="choice-grid">
+<button class="choice" onclick="answer(9,true,'Correct. Abstraction lets each layer hide details from the layer above while protocols cooperate to move the data.')">They hide details and let different jobs cooperate</button>
+<button class="choice" onclick="answer(9,false,'The layers cooperate; they are not competing alternatives.')">They compete to decide which protocol controls the Internet</button>
+<button class="choice" onclick="answer(9,false,'Layers do not mean every packet uses only one protocol. Multiple protocols work together.')">Only one layer is active during a web request</button>
+</div>
+<div class="feedback" id="f9"></div>
+</div></section>
+
+<section class="screen" id="s10">
+<div class="card">
+<h2>Final Challenge — Reconstruct the Journey</h2>
+<p>Put these events in the correct order. Click each item in sequence. The entire challenge is worth <strong>1 point</strong>, awarded only when all eight steps are correct.</p>
+<div class="order-list" id="orderList"></div>
+<div class="feedback" id="finalFeedback"></div>
+<button class="primary" id="finishBtn" style="display:none" onclick="go(11)">See Results →</button>
+</div></section>
+
+<section class="screen" id="s11">
+<div class="card">
+<h2>Mission Complete 🎉</h2>
+<p id="resultText"></p>
+<h3>AP CSP Connections</h3>
+<div class="scenario">
+<span class="badge">Protocols = agreed-upon rules</span>
+<span class="badge">Abstraction = layers hide details</span>
+<span class="badge">Fault tolerance = redundancy</span>
+<span class="badge">Scalability = packet switching + distributed routing</span>
+<span class="badge">Cybersecurity = HTTPS + SSH</span>
+</div>
+<h3>Exit Ticket</h3>
+<ol>
+<li>Why does a switch use MAC addresses while a router uses IP addresses?</li>
+<li>Why might an application choose UDP instead of TCP?</li>
+<li>What problem does DNS solve?</li>
+<li>Why is HTTPS different from HTTP?</li>
+<li>How do multiple protocols cooperate instead of competing with each other?</li>
+</ol>
+<button class="primary" onclick="location.reload()">Restart Activity</button>
+</div></section>
+</main>
+
+<footer style="max-width:1180px;margin:auto;padding:0 24px 28px">
+<span id="stage">Stage 1 of 12</span>
+<div><button class="secondary" id="backBtn" onclick="back()" disabled>← Back</button></div>
+</footer>
+
+<script>
+let current=0, score=0, answered={}, finalIndex=0;
+const TOTAL_POINTS=10;
+const screens=[...document.querySelectorAll('.screen')];
+function go(n){
+  current=n;screens.forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.getElementById('bar').style.width=(n/11*100)+'%';
+  document.getElementById('stage').textContent=`Stage ${n+1} of 12`;
+  document.getElementById('backBtn').disabled=n===0;
+  if(n===10) buildFinal();
+  if(n===11) showResult();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function back(){if(current>0)go(current-1)}
+function answer(n,correct,msg){
+  if(answered[n]) return;
+  answered[n]=true;
+  if(correct) score+=1;
+  document.getElementById('score').textContent=score;
+  const f=document.getElementById('f'+n); f.textContent=msg; f.className='feedback show '+(correct?'good':'bad');
+  document.querySelectorAll('#s'+n+' .choice').forEach(b=>b.disabled=true);
+  if(correct){
+    const b=document.createElement('button');b.className='primary';b.textContent='Continue →';b.style.marginTop='12px';
+    b.onclick=()=>go(n+1);f.appendChild(document.createElement('br'));f.appendChild(b);
+  }else{
+    const b=document.createElement('button');b.className='secondary';b.textContent='Try again';b.style.marginTop='12px';
+    b.onclick=()=>{delete answered[n];f.className='feedback';document.querySelectorAll('#s'+n+' .choice').forEach(x=>x.disabled=false)};
+    f.appendChild(document.createElement('br'));f.appendChild(b);
+  }
+}
+function animatePackets(){
+  const p1=document.getElementById('p1'),p2=document.getElementById('p2');
+  p1.classList.remove('animate');p2.classList.remove('animate');
+  void p1.offsetWidth;p1.classList.add('animate');setTimeout(()=>p2.classList.add('animate'),700);
+  document.getElementById('packetMsg').innerHTML='<strong>Watch:</strong> the packets do not have to share one permanent path. This redundancy helps the Internet tolerate failures.';
+  setTimeout(()=>document.getElementById('next7').style.display='inline-block',5200);
+}
+const finalItems=[
+ 'Browser needs the site’s IP address → DNS',
+ 'Computer prepares data using HTTPS + TCP + IP',
+ 'Switch forwards the local frame using the destination MAC address',
+ 'Router forwards the packet using the destination IP address',
+ 'More routers move packets across interconnected networks',
+ 'Server receives the request and sends a response',
+ 'TCP/IP deliver the response back toward the client',
+ 'Browser processes the response and displays the page'
+];
+let shuffled=[];
+function buildFinal(){
+  shuffled=[...finalItems].sort(()=>Math.random()-.5);finalIndex=0;
+  const list=document.getElementById('orderList');list.innerHTML='';
+  shuffled.forEach((x,i)=>{
+    const d=document.createElement('div');d.className='step';d.textContent=x;
+    d.onclick=()=>pickFinal(d,x);list.appendChild(d);
+  });
+}
+function pickFinal(d,x){
+  if(d.classList.contains('correct'))return;
+  const expected=finalItems[finalIndex];
+  if(x===expected){
+    d.classList.add('correct');d.style.pointerEvents='none';finalIndex++;
+    /* Final challenge is worth one point total. */
+    if(finalIndex===finalItems.length){
+      score+=1;
+      document.getElementById('score').textContent=score;
+      const f=document.getElementById('finalFeedback');f.textContent='Excellent. You reconstructed the complete web request and response journey. You earned the final point!';f.className='feedback show good';
+      document.getElementById('finishBtn').style.display='inline-block';
+    }
+  }else{
+    const f=document.getElementById('finalFeedback');f.textContent='Not quite. Think about what must happen before this event. Look back at the earlier checkpoints.';f.className='feedback show bad';
+    setTimeout(()=>f.className='feedback',1800);
+  }
+}
+function showResult(){
+ const complete = score===TOTAL_POINTS;
+ const pct=Math.round(score/TOTAL_POINTS*100);
+ const level=complete?'Network Architect':pct>=80?'Protocol Navigator':pct>=60?'Packet Apprentice':'Keep Exploring';
+ if(complete){
+   document.getElementById('resultText').innerHTML=`<strong>Journey successfully completed!</strong><br>You earned <strong>${score}/${TOTAL_POINTS}</strong> points (100%). 🎉<br><br>Every required checkpoint was answered correctly, including the final journey reconstruction.`;
+ }else{
+   document.getElementById('resultText').innerHTML=`You earned <strong>${score}/${TOTAL_POINTS}</strong> points (${pct}%). Your current title: <strong>${level}</strong>.<br><br><strong>You have not successfully completed the journey.</strong> You must earn <strong>10/10 points (100%)</strong> to complete it. Restart the activity and try again.<br><br>Remember: the Internet works because many protocols and devices perform different jobs and cooperate through layers.`;
+ }
+}
+</script>
+</body>
+</html>
