@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary Matching Activity - Parts of a Computer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    p.instructions {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
+    }
+    .game-container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+    .column {
+      width: 48%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      user-select: none;
+    }
+    .card:hover {
+      border-color: #3b82f6;
+      background-color: #f8fafc;
+    }
+    .term-card {
+      font-weight: bold;
+      text-align: center;
+    }
+    .def-card {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .selected {
+      border-color: #3b82f6;
+      background-color: #eff6ff;
+      box-shadow: 0 0 0 2px #3b82f6;
+    }
+    .matched {
+      background-color: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d;
+      cursor: default;
+      opacity: 0.7;
+    }
+    .incorrect {
+      background-color: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      animation: shake 0.3s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    #score-board {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #1e293b;
+    }
+
+    @media (max-width: 800px) {
+      .game-container {
+        flex-direction: column;
+      }
+      .column {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Vocabulary: Parts of a Computer</h1>
+  <p class="instructions">Click a <strong>Term</strong> on the left, then click its matching <strong>Definition</strong> on the right.</p>
+
+  <div class="game-container">
+    <div class="column" id="terms-column"></div>
+    <div class="column" id="defs-column"></div>
+  </div>
+
+  <div style="text-align:center; margin-top:20px;">
+    <button onclick="location.reload()" style="padding:10px 18px; font-size:16px; cursor:pointer;">New Shuffle</button>
+  </div>
+
+  <div id="score-board">Matched: <span id="score">0</span> / 19</div>
+  <div id="error-message" style="display:none; max-width:1000px; margin:20px auto; padding:12px; background:#fee2e2; color:#991b1b; border:1px solid #ef4444; border-radius:8px;"></div>
+
+  <script>
+    window.addEventListener('error', function(e) {
+      const msg = document.getElementById('error-message');
+      if (msg) {
+        msg.textContent = 'The activity could not load. JavaScript error: ' + e.message;
+        msg.style.display = 'block';
+      }
+    });
+
+    const vocabData = [
+      {
+            "id": 1,
+            "term": "RAM Module",
+            "def": "A printed circuit board on which memory integrated circuits are mounted. Memory modules permit easy installation and replacement in electronic systems, especially computers such as personal computers, workstations, and servers."
+      },
+      {
+            "id": 2,
+            "term": "USB",
+            "def": "An industry standard that establishes specifications for cables, connectors, and protocols for connection, communication, and power supply between computers, peripherals, and other computers."
+      },
+      {
+            "id": 3,
+            "term": "Power Supply",
+            "def": "The device that converts one voltage to another more convenient voltage while delivering power. Power supplies are designed from the output back to the input."
+      },
+      {
+            "id": 4,
+            "term": "Scanner",
+            "def": "A device that optically scans images, printed text, handwriting, or an object and converts it to a digital image."
+      },
+      {
+            "id": 5,
+            "term": "Optical Drive",
+            "def": "A disc drive that uses laser light or electromagnetic waves within or near the visible light spectrum as part of the process of reading or writing data to or from optical discs."
+      },
+      {
+            "id": 6,
+            "term": "Motherboard",
+            "def": "The main printed circuit board in general-purpose computers and other expandable systems. It holds and allows communication between many of the crucial electronic components of a system, such as the central processing unit and memory."
+      },
+      {
+            "id": 7,
+            "term": "RAM",
+            "def": "A form of computer memory that can be read and changed in any order, typically used to store working data and machine code."
+      },
+      {
+            "id": 8,
+            "term": "Heat Sink",
+            "def": "A passive heat exchanger that transfers the heat generated by an electronic or a mechanical device to a fluid medium, often air or a liquid coolant, where it is dissipated away from the device."
+      },
+      {
+            "id": 9,
+            "term": "Hard Drive",
+            "def": "An electro-mechanical data storage device that stores and retrieves digital data using magnetic storage with one or more rigid, rapidly rotating platters coated with magnetic material."
+      },
+      {
+            "id": 10,
+            "term": "Keyboard",
+            "def": "A peripheral input device modeled after the typewriter keyboard which uses an arrangement of buttons or keys to act as mechanical levers or electronic switches."
+      },
+      {
+            "id": 11,
+            "term": "Floppy Disk",
+            "def": "An obsolete type of disk storage composed of a thin and flexible disk of a magnetic storage medium in a square or nearly square plastic enclosure lined with a fabric that removes dust particles from the spinning disk."
+      },
+      {
+            "id": 12,
+            "term": "Mouse",
+            "def": "A small handheld device that is dragged across a flat surface to move the cursor on a computer screen, typically having buttons that are pressed to control functions."
+      },
+      {
+            "id": 13,
+            "term": "Monitor",
+            "def": "An output device that displays information in pictorial or text form. A monitor usually comprises a visual display, some circuitry, a casing, and a power supply."
+      },
+      {
+            "id": 14,
+            "term": "Printer",
+            "def": "A peripheral machine which makes a persistent representation of graphics or text, usually on paper. While most output is human-readable, barcode printers are an example of an expanded use for printers."
+      },
+      {
+            "id": 15,
+            "term": "Peripheral Device",
+            "def": "An internal or external device that connects directly to a computer or other digital device but does not contribute to the computer's primary function, such as computing."
+      },
+      {
+            "id": 16,
+            "term": "CD-ROM Drive",
+            "def": "A drive that uses a low-power laser beam to read digitized (binary) data that has been encoded in the form of tiny pits on an optical disk."
+      },
+      {
+            "id": 17,
+            "term": "Case",
+            "def": "Also known as a computer chassis, the enclosure that contains most of the components of a personal computer. Cases are usually constructed from steel, aluminum, and plastic. Other materials such as glass, wood, acrylic, and even Lego may also be used."
+      },
+      {
+            "id": 18,
+            "term": "CD-ROM",
+            "def": "A pre-pressed optical compact disc that contains data. Computers can read—but not write or erase—CD-ROMs; it is a type of read-only memory."
+      },
+      {
+            "id": 19,
+            "term": "CPU",
+            "def": "Also called a central processor, main processor, or just processor, it is the electronic circuitry that executes instructions comprising a computer program."
+      }
+];
+
+    let selectedTerm = null;
+    let selectedDef = null;
+    let matchesCount = 0;
+
+    function shuffle(array) {
+      return array.slice().sort(() => Math.random() - 0.5);
+    }
+
+    function initGame() {
+      const termsCol = document.getElementById('terms-column');
+      const defsCol = document.getElementById('defs-column');
+
+      const shuffledTerms = shuffle(vocabData);
+      const shuffledDefs = shuffle(vocabData);
+
+      shuffledTerms.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'term-card');
+        card.textContent = item.term;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleTermClick);
+        termsCol.appendChild(card);
+      });
+
+      shuffledDefs.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'def-card');
+        card.textContent = item.def;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleDefClick);
+        defsCol.appendChild(card);
+      });
+    }
+
+    function handleTermClick(e) {
+      if (e.target.classList.contains('matched')) return;
+
+      if (selectedTerm) {
+        selectedTerm.classList.remove('selected');
+      }
+      selectedTerm = e.target;
+      selectedTerm.classList.add('selected');
+
+      checkMatch();
+    }
+
+    function handleDefClick(e) {
+      if (e.target.classList.contains('matched')) return;
+
+      if (selectedDef) {
+        selectedDef.classList.remove('selected');
+      }
+      selectedDef = e.target;
+      selectedDef.classList.add('selected');
+
+      checkMatch();
+    }
+
+    function checkMatch() {
+      if (selectedTerm && selectedDef) {
+        const termId = selectedTerm.dataset.id;
+        const defId = selectedDef.dataset.id;
+
+        if (termId === defId) {
+          selectedTerm.classList.remove('selected');
+          selectedDef.classList.remove('selected');
+          selectedTerm.classList.add('matched');
+          selectedDef.classList.add('matched');
+
+          selectedTerm = null;
+          selectedDef = null;
+
+          matchesCount++;
+          document.getElementById('score').textContent = matchesCount;
+
+          if (matchesCount === vocabData.length) {
+            setTimeout(() => alert('Great job! You matched all terms correctly!'), 300);
+          }
+        } else {
+          const tempTerm = selectedTerm;
+          const tempDef = selectedDef;
+
+          tempTerm.classList.add('incorrect');
+          tempDef.classList.add('incorrect');
+
+          selectedTerm = null;
+          selectedDef = null;
+
+          setTimeout(() => {
+            tempTerm.classList.remove('selected', 'incorrect');
+            tempDef.classList.remove('selected', 'incorrect');
+          }, 600);
+        }
+      }
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
