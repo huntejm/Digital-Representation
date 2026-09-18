@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary Matching Activity - Digital Citizenship &amp; Social Media</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    p.instructions {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
+    }
+    .game-container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+    .column {
+      width: 48%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      user-select: none;
+    }
+    .card:hover {
+      border-color: #3b82f6;
+      background-color: #f8fafc;
+    }
+    .term-card {
+      font-weight: bold;
+      text-align: center;
+    }
+    .def-card {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .selected {
+      border-color: #3b82f6;
+      background-color: #eff6ff;
+      box-shadow: 0 0 0 2px #3b82f6;
+    }
+    .matched {
+      background-color: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d;
+      cursor: default;
+      opacity: 0.7;
+    }
+    .incorrect {
+      background-color: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      animation: shake 0.3s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    #score-board {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #1e293b;
+    }
+
+    @media (max-width: 800px) {
+      .game-container {
+        flex-direction: column;
+      }
+      .column {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Vocabulary: Digital Citizenship &amp; Social Media</h1>
+  <p class="instructions">Click a <strong>Term</strong> on the left, then click its matching <strong>Definition</strong> on the right.</p>
+
+  <div class="game-container">
+    <div class="column" id="terms-column"></div>
+    <div class="column" id="defs-column"></div>
+  </div>
+
+  <div style="text-align:center; margin-top:20px;">
+    <button onclick="location.reload()" style="padding:10px 18px; font-size:16px; cursor:pointer;">New Shuffle</button>
+  </div>
+
+  <div id="score-board">Matched: <span id="score">0</span> / 20</div>
+  <div id="error-message" style="display:none; max-width:1000px; margin:20px auto; padding:12px; background:#fee2e2; color:#991b1b; border:1px solid #ef4444; border-radius:8px;"></div>
+
+  <script>
+    window.addEventListener('error', function(e) {
+      const msg = document.getElementById('error-message');
+      if (msg) {
+        msg.textContent = 'The activity could not load. JavaScript error: ' + e.message;
+        msg.style.display = 'block';
+      }
+    });
+
+    const vocabData = [
+      {
+            "id": 1,
+            "term": "Digital Footprint",
+            "def": "All of the information online about a person, either posted by that person or others, intentionally or unintentionally."
+      },
+      {
+            "id": 2,
+            "term": "Ally",
+            "def": "Someone who responds to a bullying situation by supporting the person being bullied."
+      },
+      {
+            "id": 3,
+            "term": "Upstander",
+            "def": "Someone who responds to a bullying situation by confronting the bully directly or by telling a trusted adult."
+      },
+      {
+            "id": 4,
+            "term": "Cyberbullying",
+            "def": "Using digital devices, sites, and apps to intimidate, harm, and upset someone."
+      },
+      {
+            "id": 5,
+            "term": "Credible",
+            "def": "Able to be believed; trustworthy. Features verifiable sources, factual accuracy, and an author without strong bias (e.g., Associated Press)."
+      },
+      {
+            "id": 6,
+            "term": "Bias",
+            "def": "A prejudice or unfair preference in favor of or against one thing, person, or group."
+      },
+      {
+            "id": 7,
+            "term": "Copyright",
+            "def": "Legal protection creators have over their original work, requiring non-owners to seek permission or cite sources properly."
+      },
+      {
+            "id": 8,
+            "term": "Opt-Out",
+            "def": "To choose not to participate in a program, feature, or data-collection process."
+      },
+      {
+            "id": 9,
+            "term": "Privacy Policy",
+            "def": "A legal document or statement explaining how a site or app collects, uses, manages, and protects a user's data."
+      },
+      {
+            "id": 10,
+            "term": "Privacy Settings",
+            "def": "Controls provided by a website or app that allow users to manage what information is collected and who can see it."
+      },
+      {
+            "id": 11,
+            "term": "Bystander",
+            "def": "Someone who witnesses bullying or negative behavior online but chooses not to intervene or report it."
+      },
+      {
+            "id": 12,
+            "term": "Fair Use",
+            "def": "A legal exception to copyright law that allows limited use of copyrighted material without permission for purposes such as criticism, news reporting, teaching, or research."
+      },
+      {
+            "id": 13,
+            "term": "Plagiarism",
+            "def": "The practice of taking someone else's work, ideas, or words and passing them off as one's own without proper credit."
+      },
+      {
+            "id": 14,
+            "term": "Phishing",
+            "def": "A cyber attack technique where scam emails, texts, or websites impersonate legitimate organizations to trick individuals into revealing sensitive information like passwords."
+      },
+      {
+            "id": 15,
+            "term": "Netiquette",
+            "def": "Short for \"network etiquette\"; the informal code of polite, respectful, and appropriate behavior when communicating online."
+      },
+      {
+            "id": 16,
+            "term": "Media Literacy",
+            "def": "The ability to access, analyze, evaluate, create, and act using all forms of communication and media content."
+      },
+      {
+            "id": 17,
+            "term": "Malware",
+            "def": "Malicious software (such as viruses, spyware, or ransomware) specifically designed to disrupt, damage, or gain unauthorized access to a computer system."
+      },
+      {
+            "id": 18,
+            "term": "Two-Factor Authentication (2FA)",
+            "def": "A security process where a user provides two distinct factors to verify themselves before gaining access to an account (e.g., a password plus a phone code)."
+      },
+      {
+            "id": 19,
+            "term": "Digital Citizen",
+            "def": "A person who possesses the skills and knowledge to use digital technologies safely, responsibly, legally, and ethically."
+      },
+      {
+            "id": 20,
+            "term": "Terms of Service (ToS)",
+            "def": "The legal rules and guidelines that a user must agree to follow in order to use a website, app, or online service."
+      }
+];
+
+    let selectedTerm = null;
+    let selectedDef = null;
+    let matchesCount = 0;
+
+    function shuffle(array) {
+      return array.slice().sort(() => Math.random() - 0.5);
+    }
+
+    function initGame() {
+      const termsCol = document.getElementById('terms-column');
+      const defsCol = document.getElementById('defs-column');
+
+      const shuffledTerms = shuffle(vocabData);
+      const shuffledDefs = shuffle(vocabData);
+
+      shuffledTerms.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'term-card');
+        card.textContent = item.term;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleTermClick);
+        termsCol.appendChild(card);
+      });
+
+      shuffledDefs.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'def-card');
+        card.textContent = item.def;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleDefClick);
+        defsCol.appendChild(card);
+      });
+    }
+
+    function handleTermClick(e) {
+      if (e.target.classList.contains('matched')) return;
+
+      if (selectedTerm) {
+        selectedTerm.classList.remove('selected');
+      }
+      selectedTerm = e.target;
+      selectedTerm.classList.add('selected');
+
+      checkMatch();
+    }
+
+    function handleDefClick(e) {
+      if (e.target.classList.contains('matched')) return;
+
+      if (selectedDef) {
+        selectedDef.classList.remove('selected');
+      }
+      selectedDef = e.target;
+      selectedDef.classList.add('selected');
+
+      checkMatch();
+    }
+
+    function checkMatch() {
+      if (selectedTerm && selectedDef) {
+        const termId = selectedTerm.dataset.id;
+        const defId = selectedDef.dataset.id;
+
+        if (termId === defId) {
+          selectedTerm.classList.remove('selected');
+          selectedDef.classList.remove('selected');
+          selectedTerm.classList.add('matched');
+          selectedDef.classList.add('matched');
+
+          selectedTerm = null;
+          selectedDef = null;
+
+          matchesCount++;
+          document.getElementById('score').textContent = matchesCount;
+
+          if (matchesCount === vocabData.length) {
+            setTimeout(() => alert('Great job! You matched all terms correctly!'), 300);
+          }
+        } else {
+          const tempTerm = selectedTerm;
+          const tempDef = selectedDef;
+
+          tempTerm.classList.add('incorrect');
+          tempDef.classList.add('incorrect');
+
+          selectedTerm = null;
+          selectedDef = null;
+
+          setTimeout(() => {
+            tempTerm.classList.remove('selected', 'incorrect');
+            tempDef.classList.remove('selected', 'incorrect');
+          }, 600);
+        }
+      }
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
