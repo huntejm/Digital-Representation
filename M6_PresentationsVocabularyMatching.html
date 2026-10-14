@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentations & Digital Information Vocabulary Matching Activity</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    p.instructions {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
+    }
+    .game-container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1000px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+    .column {
+      width: 48%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      user-select: none;
+    }
+    .card:hover {
+      border-color: #3b82f6;
+      background-color: #f8fafc;
+    }
+    .term-card {
+      font-weight: bold;
+      text-align: center;
+    }
+    .def-card {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .selected {
+      border-color: #3b82f6;
+      background-color: #eff6ff;
+      box-shadow: 0 0 0 2px #3b82f6;
+    }
+    .matched {
+      background-color: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d;
+      cursor: default;
+      opacity: 0.7;
+    }
+    .incorrect {
+      background-color: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      animation: shake 0.3s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    #score-board {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #1e293b;
+    }
+    @media (max-width: 600px) {
+      .game-container { gap: 10px; }
+      .column { width: 50%; }
+      .def-card { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Presentations &amp; Digital Information Vocabulary Matching Activity</h1>
+  <p class="instructions">Click a <strong>Term</strong> on the left, then click its matching <strong>Definition</strong> on the right.</p>
+
+  <div class="game-container">
+    <div class="column" id="terms-column"></div>
+    <div class="column" id="defs-column"></div>
+  </div>
+
+  <div id="score-board">Matched: <span id="score">0</span> / <span id="total">25</span></div>
+
+  <script>
+    const vocabData = [
+      { id: 1, term: "Slide", def: "A single page in a presentation, which can hold text, images, charts, video, and other media." },
+      { id: 2, term: "Slide Deck", def: "A complete collection of slides that make up one presentation." },
+      { id: 3, term: "Template", def: "A pre-designed slide layout with set fonts, colors, and formatting that you can reuse and customize." },
+      { id: 4, term: "Theme", def: "A coordinated set of colors, fonts, and design effects applied to every slide for a consistent look." },
+      { id: 5, term: "Layout", def: "The arrangement of placeholders (title, body text, images) on a slide." },
+      { id: 6, term: "Placeholder", def: "A boxed area on a slide reserved for specific content, such as a title or picture." },
+      { id: 7, term: "Master Slide", def: "A special slide that controls the overall design and formatting of all other slides in a presentation." },
+      { id: 8, term: "Font", def: "The style and shape of text characters (e.g., Arial, Times New Roman)." },
+      { id: 9, term: "Alignment", def: "The positioning of text or objects (left, center, right, or justified) in relation to the slide or each other." },
+      { id: 10, term: "Contrast", def: "The difference between colors, especially text and background, that affects readability." },
+      { id: 11, term: "White Space", def: "Empty areas on a slide that keep the design clean and make content easier to read." },
+      { id: 12, term: "Bullet Point", def: "A short, marked line of text used to list key ideas concisely." },
+      { id: 13, term: "Graphic", def: "A visual element such as an image, icon, chart, or shape that supports the message." },
+      { id: 14, term: "Transition", def: "A visual effect that appears when moving from one slide to the next." },
+      { id: 15, term: "Animation", def: "A visual effect applied to an object or text on a slide, such as fading in or flying across." },
+      { id: 16, term: "Hyperlink", def: "Clickable text or an object that links to a website, file, or another slide." },
+      { id: 17, term: "Speaker Notes", def: "Private notes attached to a slide that the presenter can see but the audience cannot." },
+      { id: 18, term: "Presenter View", def: "A display mode that shows the presenter notes, timer, and upcoming slides while the audience sees only the current slide." },
+      { id: 19, term: "Slideshow Mode", def: "The full-screen view used to deliver a presentation to an audience." },
+      { id: 20, term: "Cloud Storage", def: "Online storage that lets you save and access files from any device with internet (e.g., Google Drive, OneDrive)." },
+      { id: 21, term: "Collaboration", def: "Working together with others on the same file, often at the same time." },
+      { id: 22, term: "Share Settings", def: "Permissions that control who can view, comment on, or edit a file." },
+      { id: 23, term: "File Format", def: "The type of file a document is saved as (e.g., .pptx, .pdf, .jpg), which determines how it opens and what it can do." },
+      { id: 24, term: "Embed", def: "To place content, such as a video or chart, directly inside a slide so it plays or displays without leaving the presentation." },
+      { id: 25, term: "Digital Citizenship", def: "Responsible, ethical, and safe behavior when using technology, including citing sources and respecting copyright." }
+    ];
+
+    let selectedTerm = null;
+    let selectedDef = null;
+    let matchesCount = 0;
+
+    function shuffle(array) {
+      return array.slice().sort(() => Math.random() - 0.5);
+    }
+
+    function initGame() {
+      const termsCol = document.getElementById('terms-column');
+      const defsCol = document.getElementById('defs-column');
+
+      document.getElementById('total').textContent = vocabData.length;
+
+      const shuffledTerms = shuffle(vocabData);
+      const shuffledDefs = shuffle(vocabData);
+
+      shuffledTerms.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'term-card');
+        card.textContent = item.term;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleTermClick);
+        termsCol.appendChild(card);
+      });
+
+      shuffledDefs.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'def-card');
+        card.textContent = item.def;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleDefClick);
+        defsCol.appendChild(card);
+      });
+    }
+
+    function handleTermClick(e) {
+      if (e.target.classList.contains('matched')) return;
+
+      if (selectedTerm) {
+        selectedTerm.classList.remove('selected');
+      }
+      selectedTerm = e.target;
+      selectedTerm.classList.add('selected');
+
+      checkMatch();
+    }
+
+    function handleDefClick(e) {
+      if (e.target.classList.contains('matched')) return;
+
+      if (selectedDef) {
+        selectedDef.classList.remove('selected');
+      }
+      selectedDef = e.target;
+      selectedDef.classList.add('selected');
+
+      checkMatch();
+    }
+
+    function checkMatch() {
+      if (selectedTerm && selectedDef) {
+        const termId = selectedTerm.dataset.id;
+        const defId = selectedDef.dataset.id;
+
+        if (termId === defId) {
+          selectedTerm.classList.remove('selected');
+          selectedDef.classList.remove('selected');
+          selectedTerm.classList.add('matched');
+          selectedDef.classList.add('matched');
+
+          selectedTerm = null;
+          selectedDef = null;
+
+          matchesCount++;
+          document.getElementById('score').textContent = matchesCount;
+
+          if (matchesCount === vocabData.length) {
+            setTimeout(() => alert('Great job! You matched all terms correctly!'), 300);
+          }
+        } else {
+          const tempTerm = selectedTerm;
+          const tempDef = selectedDef;
+
+          tempTerm.classList.add('incorrect');
+          tempDef.classList.add('incorrect');
+
+          selectedTerm = null;
+          selectedDef = null;
+
+          setTimeout(() => {
+            tempTerm.classList.remove('selected', 'incorrect');
+            tempDef.classList.remove('selected', 'incorrect');
+          }, 600);
+        }
+      }
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
