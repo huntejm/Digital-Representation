@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Networks &amp; the Internet Vocabulary Matching Activity</title>
+  <style>
+    :root {
+      --bg: #f4f6f9; --text: #333; --title: #2c3e50; --muted: #666;
+      --card: #fff; --card-border: #cbd5e1; --hover-bg: #f8fafc; --accent: #3b82f6;
+      --sel-bg: #eff6ff; --ok-bg: #dcfce7; --ok-border: #22c55e; --ok-text: #15803d;
+      --bad-bg: #fee2e2; --bad-border: #ef4444; --score: #1e293b;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #0f172a; --text: #e2e8f0; --title: #e2e8f0; --muted: #94a3b8;
+        --card: #1e293b; --card-border: #475569; --hover-bg: #273449; --accent: #60a5fa;
+        --sel-bg: #1e3a5f; --ok-bg: #14532d; --ok-border: #22c55e; --ok-text: #bbf7d0;
+        --bad-bg: #7f1d1d; --bad-border: #ef4444; --score: #e2e8f0;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0f172a; --text: #e2e8f0; --title: #e2e8f0; --muted: #94a3b8;
+      --card: #1e293b; --card-border: #475569; --hover-bg: #273449; --accent: #60a5fa;
+      --sel-bg: #1e3a5f; --ok-bg: #14532d; --ok-border: #22c55e; --ok-text: #bbf7d0;
+      --bad-bg: #7f1d1d; --bad-border: #ef4444; --score: #e2e8f0;
+    }
+    html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+    body { font-family: Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: var(--text); }
+    h1 { text-align: center; color: var(--title); }
+    p.instructions { text-align: center; color: var(--muted); margin-bottom: 25px; }
+    .game-container { display: flex; justify-content: space-between; max-width: 1000px; margin: 0 auto; gap: 20px; }
+    .column { width: 48%; display: flex; flex-direction: column; gap: 12px; }
+    .card {
+      background: var(--card); border: 2px solid var(--card-border); border-radius: 8px; padding: 14px;
+      cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); user-select: none;
+    }
+    .card:hover { border-color: var(--accent); background-color: var(--hover-bg); }
+    .term-card { font-weight: bold; text-align: center; }
+    .def-card { font-size: 0.95rem; line-height: 1.4; }
+    .selected { border-color: var(--accent); background-color: var(--sel-bg); box-shadow: 0 0 0 2px var(--accent); }
+    .matched { background-color: var(--ok-bg) !important; border-color: var(--ok-border) !important; color: var(--ok-text); cursor: default; opacity: 0.7; }
+    .incorrect { background-color: var(--bad-bg) !important; border-color: var(--bad-border) !important; animation: shake 0.3s; }
+    @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+    #score-board { text-align: center; font-size: 1.2rem; font-weight: bold; margin-top: 20px; color: var(--score); }
+    #done { text-align: center; font-size: 1.1rem; margin-top: 10px; color: var(--ok-text); display: none; }
+    @media (max-width: 600px) {
+      .game-container { gap: 10px; }
+      .column { width: 50%; }
+      .def-card { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Networks &amp; the Internet Vocabulary Matching Activity</h1>
+  <p class="instructions">Click a <strong>Term</strong> on the left, then click its matching <strong>Definition</strong> on the right.</p>
+
+  <div class="game-container">
+    <div class="column" id="terms-column"></div>
+    <div class="column" id="defs-column"></div>
+  </div>
+
+  <div id="score-board">Matched: <span id="score">0</span> / <span id="total">20</span></div>
+  <div id="done">Great job! You matched all terms correctly!</div>
+
+  <script>
+    const vocabData = [
+      { id: 1, term: "Network", def: "Two or more computing devices connected so they can share data and resources." },
+      { id: 2, term: "Internet", def: "A global system of interconnected networks that use common protocols to exchange data." },
+      { id: 3, term: "World Wide Web", def: "A collection of linked web pages and other content that you access with a browser over the Internet." },
+      { id: 4, term: "Local Area Network (LAN)", def: "A network that connects devices in a small area, such as a classroom, a school, or a home." },
+      { id: 5, term: "Wide Area Network (WAN)", def: "A network that connects devices or LANs across a large geographic area, such as a city, a country, or the world." },
+      { id: 6, term: "Router", def: "A device that forwards data between networks and chooses the path each packet takes toward its destination." },
+      { id: 7, term: "IP Address", def: "A unique number assigned to each device on a network that identifies it and tells data where to go." },
+      { id: 8, term: "Domain Name System (DNS)", def: "A system that translates website names people can read, such as example.com, into IP addresses." },
+      { id: 9, term: "Protocol", def: "A set of rules that defines how devices format, send, and receive data across a network." },
+      { id: 10, term: "TCP/IP", def: "The core set of Internet protocols: IP addresses and routes packets, and TCP checks that they arrive complete and in the correct order." },
+      { id: 11, term: "HTTPS", def: "The secure version of the protocol used to load web pages; it encrypts the data sent between a browser and a website." },
+      { id: 12, term: "Packet", def: "A small piece of data, labeled with addressing information, that is sent independently across a network and reassembled at its destination." },
+      { id: 13, term: "Bandwidth", def: "The maximum amount of data that can be transmitted over a network connection in a given amount of time." },
+      { id: 14, term: "Latency", def: "The delay between sending data and its arrival at the destination, often measured in milliseconds." },
+      { id: 15, term: "Redundancy", def: "Having backup paths, devices, or copies so a network keeps working when one part fails." },
+      { id: 16, term: "Cybersecurity", def: "The practice of protecting computers, networks, and data from unauthorized access, damage, or theft." },
+      { id: 17, term: "Firewall", def: "Hardware or software that monitors network traffic and allows or blocks it based on security rules." },
+      { id: 18, term: "Encryption", def: "Scrambling data with an algorithm and a key so that only authorized people can read it." },
+      { id: 19, term: "Malware", def: "Malicious software, such as a virus, ransomware, or spyware, designed to damage a system or steal information." },
+      { id: 20, term: "Phishing", def: "An attack that uses fake emails, texts, or websites to trick people into giving up sensitive information." }
+    ];
+
+    let selectedTerm = null;
+    let selectedDef = null;
+    let matchesCount = 0;
+
+    function shuffle(array) {
+      return array.slice().sort(() => Math.random() - 0.5);
+    }
+
+    function initGame() {
+      const termsCol = document.getElementById('terms-column');
+      const defsCol = document.getElementById('defs-column');
+      document.getElementById('total').textContent = vocabData.length;
+
+      shuffle(vocabData).forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'term-card');
+        card.textContent = item.term;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleTermClick);
+        termsCol.appendChild(card);
+      });
+
+      shuffle(vocabData).forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'def-card');
+        card.textContent = item.def;
+        card.dataset.id = item.id;
+        card.addEventListener('click', handleDefClick);
+        defsCol.appendChild(card);
+      });
+    }
+
+    function handleTermClick(e) {
+      if (e.target.classList.contains('matched')) return;
+      if (selectedTerm) selectedTerm.classList.remove('selected');
+      selectedTerm = e.target;
+      selectedTerm.classList.add('selected');
+      checkMatch();
+    }
+
+    function handleDefClick(e) {
+      if (e.target.classList.contains('matched')) return;
+      if (selectedDef) selectedDef.classList.remove('selected');
+      selectedDef = e.target;
+      selectedDef.classList.add('selected');
+      checkMatch();
+    }
+
+    function checkMatch() {
+      if (selectedTerm && selectedDef) {
+        if (selectedTerm.dataset.id === selectedDef.dataset.id) {
+          selectedTerm.classList.remove('selected');
+          selectedDef.classList.remove('selected');
+          selectedTerm.classList.add('matched');
+          selectedDef.classList.add('matched');
+          selectedTerm = null;
+          selectedDef = null;
+          matchesCount++;
+          document.getElementById('score').textContent = matchesCount;
+          if (matchesCount === vocabData.length) {
+            document.getElementById('done').style.display = 'block';
+          }
+        } else {
+          const tempTerm = selectedTerm;
+          const tempDef = selectedDef;
+          tempTerm.classList.add('incorrect');
+          tempDef.classList.add('incorrect');
+          selectedTerm = null;
+          selectedDef = null;
+          setTimeout(() => {
+            tempTerm.classList.remove('selected', 'incorrect');
+            tempDef.classList.remove('selected', 'incorrect');
+          }, 600);
+        }
+      }
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
